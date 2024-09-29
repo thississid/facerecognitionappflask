@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
-from werkzeug.utils import secure_filename
+from flask import Flask, render_template, request, flash, redirect, url_for
+from werkzeug.utils import secure_filename  # Import secure_filename
 import os
 import sqlite3
 import cv2
-import face_recognition
 import numpy as np
+import face_recognition
+import base64
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -28,52 +29,57 @@ def init_db():
 def index():
     return render_template('index.html')
 
-# Upload face image to store in DB
+# Upload and store face image in DB
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
         flash('No file part')
         return redirect(request.url)
+
     file = request.files['file']
+
     if file.filename == '':
         flash('No selected file')
         return redirect(request.url)
-    
+
     if file:
+        # Save the uploaded file
         filename = secure_filename(file.filename)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
-        
-        # Face recognition process
+
+        # Load the image and create the face encoding
         image = face_recognition.load_image_file(file_path)
         encodings = face_recognition.face_encodings(image)
 
-        if len(encodings) > 0:
-            encoding = encodings[0]
-            name = request.form.get('name', 'Unknown')
-            
+        if encodings:
+            # Store the encoding in the database
+            encoding = encodings[0].tobytes()  # Convert to bytes
             conn = sqlite3.connect('database.db')
             c = conn.cursor()
-            c.execute("INSERT INTO faces (name, encoding) VALUES (?, ?)", (name, encoding.tobytes()))
+            c.execute("INSERT INTO faces (name, encoding) VALUES (?, ?)", (filename, encoding))
             conn.commit()
             conn.close()
-
-            flash(f'{name} face stored successfully!')
+            flash('File uploaded and face encoded successfully.')
         else:
-            flash('No face found in the image!')
+            flash('No face found in the image.')
 
-        return redirect(url_for('index'))
+    return redirect(url_for('index'))
 
-# Recognize face from uploaded image
-@app.route('/recognize', methods=['POST'])
-def recognize_face():
-    file = request.files['file']
-    filename = secure_filename(file.filename)
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    file.save(file_path)
+# Recognize face from webcam image
+@app.route('/recognize_webcam', methods=['POST'])
+def recognize_webcam():
+    # Capture base64 image from webcam
+    image_data = request.form['image_data']
+    # Decode base64 image
+    image_data = image_data.split(",")[1]
+    img_bytes = base64.b64decode(image_data)
     
-    unknown_image = face_recognition.load_image_file(file_path)
-    unknown_encoding = face_recognition.face_encodings(unknown_image)
+    # Convert to numpy array for OpenCV and face_recognition processing
+    nparr = np.frombuffer(img_bytes, np.uint8)
+    img_np = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
+    unknown_encoding = face_recognition.face_encodings(img_np)
 
     if len(unknown_encoding) == 0:
         flash('No face found in the image!')
@@ -81,11 +87,11 @@ def recognize_face():
     
     unknown_encoding = unknown_encoding[0]
 
+    # Compare with known encodings in the database
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
     c.execute("SELECT name, encoding FROM faces")
     results = c.fetchall()
-
     conn.close()
 
     known_encodings = [(name, np.frombuffer(enc)) for name, enc in results]

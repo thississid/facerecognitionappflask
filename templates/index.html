@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/capture.js') }}"></script>
     <title>Face Recognition App</title>
 </head>
 <body>
@@ -17,12 +18,19 @@
             <button type="submit">Upload and Store</button>
         </form>
 
-        <h2>Recognize a Face</h2>
-        <form method="POST" action="/recognize" enctype="multipart/form-data">
-            <input type="file" name="file" required>
-            <button type="submit">Recognize</button>
+        <h2>Recognize Face Using Webcam</h2>
+        <div id="camera">
+            <video id="video" width="320" height="240" autoplay></video>
+            <button id="snap">Capture</button>
+            <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+        </div>
+
+        <form id="recognizeForm" method="POST" action="/recognize_webcam">
+            <input type="hidden" id="image_data" name="image_data">
+            <button type="submit" id="submitBtn" style="display:none;">Submit for Recognition</button>
         </form>
     </div>
+    
     {% with messages = get_flashed_messages() %}
         {% if messages %}
             <ul class="flashes">
