@@ -26,4 +26,4 @@ To run this application, you need to have the following installed:
 1. Clone this repository:
    ```bash
    git clone https://github.com/yourusername/your-repo-name.git
-   cd your-repo-name
+   cd facerecognitionappflask
