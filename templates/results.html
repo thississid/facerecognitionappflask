@@ -3,12 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <title>Recognition Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>Face Recognition Results</h1>
-    <h2>Recognized Face: {{ name }}</h2>
-    <a href="/">Back to Home</a>
+    <h1>Recognition Results</h1>
+
+    <p><strong>Name:</strong> {{ name }}</p>
+    {% if age %}
+        <p><strong>Age:</strong> {{ age }}</p>
+        <p><strong>GPA:</strong> {{ gpa }}</p>
+    {% endif %}
+    
+    {% if add_new %}
+        <form method="POST" action="{{ url_for('add_person') }}">
+            <input type="text" name="name" placeholder="Enter Name" required>
+            <input type="number" name="age" placeholder="Enter Age" required>
+            <input type="text" name="gpa" placeholder="Enter GPA" required>
+            <button type="submit">Add Person to Database</button>
+        </form>
+    {% endif %}
+
+    <a href="{{ url_for('index') }}">Back to Home</a>
 </body>
 </html>

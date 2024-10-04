@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Face Recognition</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="{{ url_for('static', filename='js/capture.js') }}"></script>
+</head>
+<body>
+<h1>Test the Project</h1>
+<div id="camera">
+<video id="video" width="320" height="240" autoplay></video>
+<button id="snap">Capture</button>
+<canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+</div>
+<form id="recognizeForm" method="POST" action="/test">
+<input type="hidden" id="image_data" name="image_data">
+<button type="submit" id="submitBtn" style="display:none;">Submit for Recognition</button>
+</form>
+<a href="{{ url_for('index') }}" class="button">Home</a> <!-- Home button added -->
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul class="flashes">
+{% for message in messages %}
+<li>{{ message }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+</body>
+</html>

@@ -1,23 +1,28 @@
-window.onload = function() {
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    const snap = document.getElementById('snap');
-    const submitBtn = document.getElementById('submitBtn');
-    const imageDataField = document.getElementById('image_data');
+// capture.js
+window.onload = function () {
+    var video = document.getElementById('video');
+    var canvas = document.getElementById('canvas');
+    var snap = document.getElementById('snap');
+    var submitBtn = document.getElementById('submitBtn');
+    var imageData = document.getElementById('image_data');
 
-    // Get access to the webcam
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+    // Get access to the camera
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function (stream) {
             video.srcObject = stream;
-            video.play();
+        })
+        .catch(function (err) {
+            console.log("An error occurred: " + err);
         });
-    }
 
-    // Trigger photo capture
-    snap.addEventListener('click', function() {
-        canvas.getContext('2d').drawImage(video, 0, 0, 320, 240);
-        const dataURL = canvas.toDataURL('image/png');
-        imageDataField.value = dataURL;
-        submitBtn.style.display = 'block';
+    // Trigger photo take
+    snap.addEventListener("click", function () {
+        var context = canvas.getContext('2d');
+        canvas.style.display = 'block';
+        context.drawImage(video, 0, 0, 320, 240);
+
+        var dataURL = canvas.toDataURL('image/png');
+        imageData.value = dataURL; // Set the hidden input with the base64 data
+        submitBtn.style.display = 'block'; // Show submit button
     });
 };

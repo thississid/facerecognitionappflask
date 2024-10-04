@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Database</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Create Database</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="text" name="name" placeholder="Enter name">
+        <input type="number" name="age" placeholder="Enter age">
+        <input type="text" name="gpa" placeholder="Enter GPA">
+        <input type="file" name="file">
+        <button type="submit">Add Student</button>
+    </form>
+    <a href="{{ url_for('index') }}" class="button">Home</a> <!-- Home button added -->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class="flashes">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+</body>
+</html>
