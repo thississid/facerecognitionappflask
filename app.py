@@ -146,7 +146,7 @@ def add_to_db():
     gpa = request.form['gpa']
     encoding = np.array(session.get('unknown_encoding')).tobytes()  # Convert back to bytes
 
-    # Insert the new person's details and encoding into the database
+    # Insert the new person's details and encodinginto the database
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
     c.execute("INSERT INTO students (name, age, gpa, encoding) VALUES (?, ?, ?, ?)",
