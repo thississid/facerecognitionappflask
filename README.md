@@ -7,7 +7,7 @@ This project is a Flask-based web application for face recognition. The app allo
 - Upload a face image and store the face encoding in a database.
 - Recognize faces from a webcam snapshot using face encodings stored in the database.
 - Simple user interface with Flask templates and image upload functionality.
-
+- Facenet model used for its light weight nature
 ## Requirements
 
 To run this application, you need to have the following installed:
@@ -17,9 +17,9 @@ To run this application, you need to have the following installed:
 - OpenCV
 - face_recognition (a Python library built on dlib)
 - SQLite (for storing face encodings)
-- NumPy
+- NumPy 
 - Werkzeug (for secure file upload)
-- Jinja2 (Flask's default templating engine)
+- Jinja2 (Flask's default templating engine)templates 
 
 ## Setup
 
